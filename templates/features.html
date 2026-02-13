@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Features — PredictCart{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="page-hero-container">
+        <span class="section-badge">Features</span>
+        <h1 class="page-title">Powerful AI-Driven<br><span class="gradient-text">Pricing Intelligence</span></h1>
+        <p class="page-subtitle">Enterprise-grade features built on state-of-the-art machine learning</p>
+    </div>
+</section>
+
+<section class="content-section">
+    <div class="section-container">
+        <div class="features-detail-grid">
+            <div class="feature-detail-card">
+                <div class="feature-detail-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>
+                    </svg>
+                </div>
+                <h3>Advanced BERT Encoding</h3>
+                <p>Leverage 440 million parameter BERT model to extract deep semantic meaning from product titles. Our fine-tuned encoder understands brand names, specifications, and product attributes to generate rich 768-dimensional embeddings.</p>
+                <ul class="feature-bullets">
+                    <li>Pretrained on 3.3B words</li>
+                    <li>12-layer transformer architecture</li>
+                    <li>Understands context and semantics</li>
+                </ul>
+            </div>
+
+            <div class="feature-detail-card">
+                <div class="feature-detail-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                </div>
+                <h3>Multimodal Fusion</h3>
+                <p>Combine text, categorical, and numerical features through our custom multimodal transformer. Each modality is encoded separately then fused with learned attention mechanisms for comprehensive price analysis.</p>
+                <ul class="feature-bullets">
+                    <li>3 independent encoders</li>
+                    <li>Attention-based fusion</li>
+                    <li>Optimal feature weighting</li>
+                </ul>
+            </div>
+
+            <div class="feature-detail-card">
+                <div class="feature-detail-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                </div>
+                <h3>Real-Time Inference</h3>
+                <p>Optimized inference pipeline delivers predictions in under 3 seconds. Lazy model loading ensures instant UI while background processes handle BERT initialization efficiently.</p>
+                <ul class="feature-bullets">
+                    <li>&lt;3s response time</li>
+                    <li>Batched preprocessing</li>
+                    <li>GPU acceleration ready</li>
+                </ul>
+            </div>
+
+            <div class="feature-detail-card">
+                <div class="feature-detail-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                </div>
+                <h3>Confidence Estimation</h3>
+                <p>Every prediction includes a confidence score based on model uncertainty. Use confidence thresholds to filter reliable predictions and flag edge cases for manual review.</p>
+                <ul class="feature-bullets">
+                    <li>Monte Carlo dropout</li>
+                    <li>Ensemble uncertainty</li>
+                    <li>Calibrated probabilities</li>
+                </ul>
+            </div>
+
+            <div class="feature-detail-card">
+                <div class="feature-detail-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                </div>
+                <h3>Category Intelligence</h3>
+                <p>Specialized encodings for 19 product categories capture category-specific pricing dynamics. From electronics to fashion, each category has learned representations.</p>
+                <ul class="feature-bullets">
+                    <li>19 supported categories</li>
+                    <li>Learnable embeddings</li>
+                    <li>Cross-category transfer</li>
+                </ul>
+            </div>
+
+            <div class="feature-detail-card">
+                <div class="feature-detail-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                    </svg>
+                </div>
+                <h3>RESTful API</h3>
+                <p>Simple JSON-based API makes integration effortless. POST product data, receive structured predictions with price ranges and metadata in milliseconds.</p>
+                <ul class="feature-bullets">
+                    <li>JSON request/response</li>
+                    <li>Comprehensive documentation</li>
+                    <li>Rate limiting ready</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="tech-stack-section">
+    <div class="section-container">
+        <div class="section-header-center">
+            <span class="section-badge">Technology Stack</span>
+            <h2 class="section-title">Built With <span class="gradient-text">Best-in-Class</span> Tools</h2>
+        </div>
+        <div class="tech-grid">
+            <div class="tech-card">
+                <div class="tech-logo">🔥</div>
+                <h4>PyTorch 2.3</h4>
+                <p>Deep learning framework</p>
+            </div>
+            <div class="tech-card">
+                <div class="tech-logo">🤗</div>
+                <h4>Transformers</h4>
+                <p>BERT implementation</p>
+            </div>
+            <div class="tech-card">
+                <div class="tech-logo">⚡</div>
+                <h4>Flask</h4>
+                <p>Web framework</p>
+            </div>
+            <div class="tech-card">
+                <div class="tech-logo">🔢</div>
+                <h4>NumPy</h4>
+                <p>Numerical computing</p>
+            </div>
+            <div class="tech-card">
+                <div class="tech-logo">🐼</div>
+                <h4>Pandas</h4>
+                <p>Data processing</p>
+            </div>
+            <div class="tech-card">
+                <div class="tech-logo">📊</div>
+                <h4>Scikit-learn</h4>
+                <p>Preprocessing pipeline</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

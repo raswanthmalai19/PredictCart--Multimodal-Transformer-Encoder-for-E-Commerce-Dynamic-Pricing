@@ -40,14 +40,14 @@ Thumbs.db
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# Large Model & Data Files (download separately or train yourself)
+# Model files & large datasets
 *.pth
 *.pkl
-simple_models/
-Transformer_Ready_Input/
-Preprocessed_Data_Enhanced/
 dataset_25%/
-simple_results/*.png
+simple_models/
+simple_results/
+Preprocessed_Data_Enhanced/
+Transformer_Ready_Input/
 
 # Logs
 *.log

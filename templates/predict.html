@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Predict Price — PredictCart{% endblock %}
+{% block meta_description %}Predict e-commerce product prices with AI. Enter product details and get instant, accurate price estimates powered by BERT and multimodal transformers.{% endblock %}
+
+{% block content %}
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Powered by Multimodal Transformer
+            </div>
+            <h1 class="hero-title">AI-Powered Price<br><span class="gradient-text">Prediction Engine</span></h1>
+            <p class="hero-subtitle">Predict e-commerce product prices with 85%+ accuracy using our advanced multimodal transformer that combines BERT text analysis, category encoding, and market signals.</p>
+            <div style="margin-top:16px;">
+                <div class="nav-status" id="modelStatus" style="display:inline-flex;">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Checking model...</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main App -->
+    <section class="app-section">
+        <div class="app-container">
+
+            <!-- Input Panel -->
+            <div class="panel input-panel">
+                <div class="panel-header">
+                    <div class="panel-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </div>
+                    <div>
+                        <h2 class="panel-title">Product Details</h2>
+                        <p class="panel-desc">Enter product information for price analysis</p>
+                    </div>
+                </div>
+
+                <form id="predictionForm" class="form" autocomplete="off">
+                    <!-- Product Name -->
+                    <div class="field">
+                        <label class="field-label" for="productName">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4a2 2 0 0 1 2-2h8.5L20 7.5V20a2 2 0 0 1-2 2H4"/><polyline points="14 2 14 8 20 8"/></svg>
+                            Product Name <span class="req">*</span>
+                        </label>
+                        <input type="text" id="productName" name="product_name" class="field-input" placeholder="e.g. Samsung Galaxy S21 Ultra 5G 128GB Smartphone" required>
+                        <span class="field-hint">Include brand, model, specs for better accuracy</span>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="field">
+                        <label class="field-label" for="category">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                            Category <span class="req">*</span>
+                        </label>
+                        <div class="select-wrapper">
+                            <select id="category" name="category" class="field-select" required>
+                                <option value="" disabled selected>Choose a product category</option>
+                                {% for cat in categories %}
+                                <option value="{{ cat }}">{{ cat.replace('&', '&amp;').title() }}</option>
+                                {% endfor %}
+                            </select>
+                            <svg class="select-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
+                    </div>
+
+                    <!-- Two Column -->
+                    <div class="field-row">
+                        <div class="field">
+                            <label class="field-label" for="ratings">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                Rating
+                            </label>
+                            <input type="number" id="ratings" name="ratings" class="field-input" min="0" max="5" step="0.1" value="4.0">
+                            <div class="star-display" id="starDisplay">
+                                <span class="star on">&#9733;</span><span class="star on">&#9733;</span><span class="star on">&#9733;</span><span class="star on">&#9733;</span><span class="star">&#9733;</span>
+                                <span class="star-text" id="ratingText">4.0</span>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="field-label" for="noOfRatings">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                Reviews
+                            </label>
+                            <input type="number" id="noOfRatings" name="no_of_ratings" class="field-input" min="0" value="500">
+                        </div>
+                    </div>
+
+                    <!-- Discount -->
+                    <div class="field">
+                        <label class="field-label" for="discountRatio">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+                            Discount
+                            <span class="discount-badge" id="discountBadge">0% OFF</span>
+                        </label>
+                        <div class="slider-track">
+                            <input type="range" id="discountRatio" name="discount_ratio" class="slider" min="0" max="80" value="0">
+                            <div class="slider-fill" id="sliderFill"></div>
+                        </div>
+                        <div class="slider-labels"><span>No discount</span><span>80% off</span></div>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <span class="btn-text">Analyze &amp; Predict Price</span>
+                        <div class="btn-shimmer"></div>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="panel results-panel">
+
+                <!-- Placeholder -->
+                <div class="state placeholder-state" id="placeholderState">
+                    <div class="placeholder-visual">
+                        <div class="pulse-ring"></div>
+                        <div class="pulse-ring delay-1"></div>
+                        <div class="pulse-ring delay-2"></div>
+                        <svg class="placeholder-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+                        </svg>
+                    </div>
+                    <h3 class="placeholder-title">Ready for Prediction</h3>
+                    <p class="placeholder-text">Fill in the product details and hit <strong>"Analyze & Predict Price"</strong> to get an AI-powered price estimate.</p>
+                    <div class="info-chips">
+                        <div class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> 85%+ Accuracy</div>
+                        <div class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Real-time</div>
+                        <div class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Secure</div>
+                    </div>
+                </div>
+
+                <!-- Loading -->
+                <div class="state loading-state hidden" id="loadingState">
+                    <div class="loader">
+                        <div class="loader-ring"></div>
+                        <div class="loader-ring inner"></div>
+                    </div>
+                    <h3 class="loading-title">Analyzing Product</h3>
+                    <p class="loading-text">Running BERT encoder and transformer model...</p>
+                    <div class="loading-steps">
+                        <div class="step active"><span class="step-dot"></span> Encoding text with BERT</div>
+                        <div class="step"><span class="step-dot"></span> Processing category features</div>
+                        <div class="step"><span class="step-dot"></span> Running transformer model</div>
+                        <div class="step"><span class="step-dot"></span> Computing price estimate</div>
+                    </div>
+                </div>
+
+                <!-- Results -->
+                <div class="state results-state hidden" id="resultsState">
+                    <div class="result-badge">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        Prediction Complete
+                    </div>
+
+                    <div class="price-hero">
+                        <span class="price-label">Estimated Market Price</span>
+                        <div class="price-amount" id="predictedPrice">₹0</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Confidence Score</span>
+                            <span class="metric-value" id="confidenceValue">0%</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" id="confidenceFill"></div></div>
+                        <span class="metric-hint" id="confidenceHint">—</span>
+                    </div>
+
+                    <div class="range-card">
+                        <div class="range-header">Expected Price Range</div>
+                        <div class="range-visual">
+                            <div class="range-bar"><div class="range-fill" id="rangeFill"></div><div class="range-marker" id="rangeMarker"></div></div>
+                        </div>
+                        <div class="range-endpoints">
+                            <div class="range-end"><span class="range-end-label">Low</span><span class="range-end-value" id="priceLow">₹0</span></div>
+                            <div class="range-end center"><span class="range-end-label">Predicted</span><span class="range-end-value predicted" id="priceMid">₹0</span></div>
+                            <div class="range-end"><span class="range-end-label">High</span><span class="range-end-value" id="priceHigh">₹0</span></div>
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-title">Analysis Summary</div>
+                        <div class="summary-grid">
+                            <div class="summary-item"><span class="summary-label">Product</span><span class="summary-value" id="sumProduct">—</span></div>
+                            <div class="summary-item"><span class="summary-label">Category</span><span class="summary-value" id="sumCategory">—</span></div>
+                            <div class="summary-item"><span class="summary-label">Rating</span><span class="summary-value" id="sumRating">—</span></div>
+                            <div class="summary-item"><span class="summary-label">Reviews</span><span class="summary-value" id="sumReviews">—</span></div>
+                        </div>
+                    </div>
+
+                    <button class="reset-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                        New Prediction
+                    </button>
+                </div>
+
+                <!-- Error -->
+                <div class="state error-state hidden" id="errorState">
+                    <svg class="error-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                    <h3 class="error-title">Something Went Wrong</h3>
+                    <p class="error-text" id="errorMessage">An error occurred.</p>
+                    <button class="reset-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+

@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}Documentation — PredictCart{% endblock %}
+
+{% block content %}
+<section class="docs-hero">
+    <div class="docs-container">
+        <div class="docs-header">
+            <span class="section-badge">Documentation</span>
+            <h1 class="docs-title">Get Started with <span class="gradient-text">PredictCart</span></h1>
+            <p class="docs-subtitle">Everything you need to integrate AI-powered price prediction into your application</p>
+        </div>
+    </div>
+</section>
+
+<section class="docs-content">
+    <div class="docs-layout">
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <div class="docs-nav-section">
+                    <h4>Getting Started</h4>
+                    <a href="#quickstart" class="docs-nav-link active">Quick Start</a>
+                    <a href="#installation" class="docs-nav-link">Installation</a>
+                    <a href="#basic-usage" class="docs-nav-link">Basic Usage</a>
+                </div>
+                <div class="docs-nav-section">
+                    <h4>Core Concepts</h4>
+                    <a href="#architecture" class="docs-nav-link">Architecture</a>
+                    <a href="#model" class="docs-nav-link">Model Details</a>
+                    <a href="#features" class="docs-nav-link">Input Features</a>
+                </div>
+                <div class="docs-nav-section">
+                    <h4>API Reference</h4>
+                    <a href="#api-endpoints" class="docs-nav-link">Endpoints</a>
+                    <a href="#api-examples" class="docs-nav-link">Examples</a>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="docs-main">
+            <article id="quickstart" class="docs-article">
+                <h2>Quick Start</h2>
+                <p>Get up and running with PredictCart in under 5 minutes.</p>
+                
+                <h3>Prerequisites</h3>
+                <ul>
+                    <li>Python 3.8 or higher</li>
+                    <li>pip or conda package manager</li>
+                    <li>4GB RAM minimum (8GB recommended)</li>
+                </ul>
+
+                <h3>Installation</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>bash</span>
+                        <button class="code-copy">Copy</button>
+                    </div>
+                    <pre><code># Clone the repository
+git clone https://github.com/raswanthmalai19/PredictCart.git
+cd PredictCart
+
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements_web.txt</code></pre>
+                </div>
+
+                <h3>Running the Server</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>bash</span>
+                        <button class="code-copy">Copy</button>
+                    </div>
+                    <pre><code># Start the Flask server
+python app_quick.py
+
+# Server will be available at http://localhost:5000</code></pre>
+                </div>
+
+                <div class="info-box success">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    <div>
+                        <strong>First Run</strong>
+                        <p>The BERT model (440MB) will be downloaded automatically on first prediction. This may take 2-3 minutes.</p>
+                    </div>
+                </div>
+            </article>
+
+            <article id="architecture" class="docs-article">
+                <h2>Architecture</h2>
+                <p>PredictCart uses a multimodal transformer architecture that combines multiple data sources for accurate price prediction.</p>
+
+                <h3>Model Components</h3>
+                <div class="architecture-grid">
+                    <div class="arch-card">
+                        <h4>Text Encoder</h4>
+                        <p>BERT-base-uncased (440M parameters) encodes product names into 768-dimensional semantic vectors.</p>
+                    </div>
+                    <div class="arch-card">
+                        <h4>Category Encoder</h4>
+                        <p>One-hot encoding for 19 product categories with learnable category embeddings.</p>
+                    </div>
+                    <div class="arch-card">
+                        <h4>Transformer Layers</h4>
+                        <p>2-layer transformer with 4 attention heads (d_model=128) and dropout regularization.</p>
+                    </div>
+                    <div class="arch-card">
+                        <h4>Regression Head</h4>
+                        <p>Attention-pooled features mapped to log-price space with confidence estimation.</p>
+                    </div>
+                </div>
+
+                <h3>Training Details</h3>
+                <div class="specs-table">
+                    <div class="spec-row">
+                        <div class="spec-label">Dataset</div>
+                        <div class="spec-value">100K+ Amazon products across 19 categories</div>
+                    </div>
+                    <div class="spec-row">
+                        <div class="spec-label">Training Time</div>
+                        <div class="spec-value">~8 hours on NVIDIA RTX 3090</div>
+                    </div>
+                    <div class="spec-row">
+                        <div class="spec-label">Accuracy</div>
+                        <div class="spec-value">85%+ within ±15% price range</div>
+                    </div>
+                    <div class="spec-row">
+                        <div class="spec-label">Model Size</div>
+                        <div class="spec-value">1.3MB (excluding BERT weights)</div>
+                    </div>
+                </div>
+            </article>
+
+            <article id="api-endpoints" class="docs-article">
+                <h2>API Endpoints</h2>
+                
+                <h3>POST /api/predict</h3>
+                <p>Main endpoint for price prediction.</p>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>json</span>
+                        <button class="code-copy">Copy</button>
+                    </div>
+                    <pre><code>{
+  "product_name": "Samsung Galaxy S21 Ultra 5G 128GB Smartphone",
+  "category": "electronics",
+  "ratings": 4.5,
+  "no_of_ratings": 2500,
+  "discount_ratio": 0.15
+}</code></pre>
+                </div>
+
+                <h4>Response</h4>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>json</span>
+                        <button class="code-copy">Copy</button>
+                    </div>
+                    <pre><code>{
+  "success": true,
+  "predicted_price": 89999.00,
+  "confidence": 0.92,
+  "price_range": {
+    "low": 73999.15,
+    "high": 105998.85
+  }
+}</code></pre>
+                </div>
+
+                <h3>GET /api/categories</h3>
+                <p>Get list of supported product categories.</p>
+
+                <h3>GET /api/health</h3>
+                <p>Check model loading status and server health.</p>
+            </article>
+        </main>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+
+{% block title %}API Documentation — PredictCart{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="page-hero-container">
+        <span class="section-badge">API Reference</span>
+        <h1 class="page-title">REST API<br><span class="gradient-text">Documentation</span></h1>
+        <p class="page-subtitle">Integrate price prediction into your applications</p>
+    </div>
+</section>
+
+<section class="content-section">
+    <div class="api-layout">
+        <aside class="api-sidebar">
+            <nav class="api-nav">
+                <h4>Endpoints</h4>
+                <a href="#predict" class="api-nav-link active">POST /api/predict</a>
+                <a href="#categories" class="api-nav-link">GET /api/categories</a>
+                <a href="#health" class="api-nav-link">GET /api/health</a>
+                <h4>Resources</h4>
+                <a href="#authentication" class="api-nav-link">Authentication</a>
+                <a href="#rate-limits" class="api-nav-link">Rate Limits</a>
+                <a href="#errors" class="api-nav-link">Error Handling</a>
+            </nav>
+        </aside>
+
+        <main class="api-main">
+            <article id="predict" class="api-article">
+                <div class="endpoint-header">
+                    <span class="http-method post">POST</span>
+                    <code class="endpoint-path">/api/predict</code>
+                </div>
+                <p class="endpoint-desc">Predict product price based on name, category, and market signals.</p>
+
+                <h3>Request Body</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>application/json</span>
+                        <button class="code-copy">Copy</button>
+                    </div>
+                    <pre><code>{
+  "product_name": "string (required)",
+  "category": "string (required)",
+  "ratings": "number (optional, 0-5, default: 4.0)",
+  "no_of_ratings": "integer (optional, default: 100)",
+  "discount_ratio": "number (optional, 0-1, default: 0.0)"
+}</code></pre>
+                </div>
+
+                <h3>Example Request</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>curl</span>
+                        <button class="code-copy">Copy</button>
+                    </div>
+                    <pre><code>curl -X POST http://localhost:5000/api/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "product_name": "Samsung Galaxy S21 Ultra 5G 128GB Smartphone",
+    "category": "electronics",
+    "ratings": 4.5,
+    "no_of_ratings": 2500,
+    "discount_ratio": 0.15
+  }'</code></pre>
+                </div>
+
+                <h3>Response</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>200 OK</span>
+                        <button class="code-copy">Copy</button>
+                    </div>
+                    <pre><code>{
+  "success": true,
+  "prediction": {
+    "price": 89999.00,
+    "price_formatted": "₹89,999.00",
+    "confidence": 92.3,
+    "price_range": {
+      "lower": 76499.15,
+      "upper": 103498.85,
+      "lower_formatted": "₹76,499.15",
+      "upper_formatted": "₹1,03,498.85"
+    }
+  },
+  "input": {
+    "product_name": "Samsung Galaxy S21 Ultra 5G 128GB Smartphone",
+    "category": "electronics",
+    "ratings": 4.5,
+    "no_of_ratings": 2500,
+    "discount_ratio": 0.15
+  }
+}</code></pre>
+                </div>
+
+                <h3>Parameters</h3>
+                <div class="params-table">
+                    <div class="param-row">
+                        <div class="param-name"><code>product_name</code> <span class="required-badge">required</span></div>
+                        <div class="param-desc">
+                            <span class="param-type">string</span>
+                            <p>Full product name including brand, model, and key specifications. More detailed names yield better predictions.</p>
+                        </div>
+                    </div>
+                    <div class="param-row">
+                        <div class="param-name"><code>category</code> <span class="required-badge">required</span></div>
+                        <div class="param-desc">
+                            <span class="param-type">string</span>
+                            <p>Product category. Must be one of the 19 supported categories. Use <code>/api/categories</code> to get the full list.</p>
+                        </div>
+                    </div>
+                    <div class="param-row">
+                        <div class="param-name"><code>ratings</code> <span class="optional-badge">optional</span></div>
+                        <div class="param-desc">
+                            <span class="param-type">number</span>
+                            <p>Average customer rating, 0-5 scale. Default: 4.0</p>
+                        </div>
+                    </div>
+                    <div class="param-row">
+                        <div class="param-name"><code>no_of_ratings</code> <span class="optional-badge">optional</span></div>
+                        <div class="param-desc">
+                            <span class="param-type">integer</span>
+                            <p>Number of customer ratings/reviews. Higher values indicate more established products. Default: 100</p>
+                        </div>
+                    </div>
+                    <div class="param-row">
+                        <div class="param-name"><code>discount_ratio</code> <span class="optional-badge">optional</span></div>
+                        <div class="param-desc">
+                            <span class="param-type">number</span>
+                            <p>Discount percentage as decimal (0-1). E.g., 0.15 = 15% off. Default: 0.0</p>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article id="categories" class="api-article">
+                <div class="endpoint-header">
+                    <span class="http-method get">GET</span>
+                    <code class="endpoint-path">/api/categories</code>
+                </div>
+                <p class="endpoint-desc">Retrieve list of supported product categories.</p>
+
+                <h3>Example Request</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>curl</span>
+                        <button class="code-copy">Copy</button>
+                    </div>
+                    <pre><code>curl http://localhost:5000/api/categories</code></pre>
+                </div>
+
+                <h3>Response</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>200 OK</span>
+                        <button class="code-copy">Copy</button>
+                    </div>
+                    <pre><code>{
+  "success": true,
+  "categories": [
+    "accessories",
+    "appliances",
+    "automotive",
+    "baby",
+    "beauty",
+    "books",
+    "car & motorbike",
+    "computers",
+    "electronics",
+    "fashion",
+    "grocery",
+    "health & personal care",
+    "home & kitchen",
+    "music",
+    "pet supplies",
+    "sports",
+    "toys & games",
+    "tv, audio & cameras",
+    "video games"
+  ]
+}</code></pre>
+                </div>
+            </article>
+
+            <article id="health" class="api-article">
+                <div class="endpoint-header">
+                    <span class="http-method get">GET</span>
+                    <code class="endpoint-path">/api/health</code>
+                </div>
+                <p class="endpoint-desc">Check server health and model loading status.</p>
+
+                <h3>Example Request</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>curl</span>
+                        <button class="code-copy">Copy</button>
+                    </div>
+                    <pre><code>curl http://localhost:5000/api/health</code></pre>
+                </div>
+
+                <h3>Response</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>200 OK</span>
+                        <button class="code-copy">Copy</button>
+                    </div>
+                    <pre><code>{
+  "status": "healthy",
+  "model_loaded": true,
+  "loading": false
+}</code></pre>
+                </div>
+            </article>
+
+            <article id="errors" class="api-article">
+                <h2>Error Handling</h2>
+                <p>The API uses standard HTTP status codes and returns error details in JSON format.</p>
+
+                <h3>Error Response Format</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>json</span>
+                        <button class="code-copy">Copy</button>
+                    </div>
+                    <pre><code>{
+  "success": false,
+  "error": "Error description"
+}</code></pre>
+                </div>
+
+                <h3>Status Codes</h3>
+                <div class="status-table">
+                    <div class="status-row">
+                        <div class="status-code success">200</div>
+                        <div class="status-desc">Request successful</div>
+                    </div>
+                    <div class="status-row">
+                        <div class="status-code error">400</div>
+                        <div class="status-desc">Bad Request - Invalid parameters</div>
+                    </div>
+                    <div class="status-row">
+                        <div class="status-code error">500</div>
+                        <div class="status-desc">Internal Server Error</div>
+                    </div>
+                    <div class="status-row">
+                        <div class="status-code error">503</div>
+                        <div class="status-desc">Service Unavailable - Model loading</div>
+                    </div>
+                </div>
+            </article>
+        </main>
+    </div>
+</section>
+{% endblock %}
