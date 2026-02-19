@@ -6,8 +6,8 @@
 <section class="page-hero">
     <div class="page-hero-container">
         <span class="section-badge">About Us</span>
-        <h1 class="page-title">Transforming E-Commerce<br><span class="gradient-text">With AI Innovation</span></h1>
-        <p class="page-subtitle">Building the future of intelligent pricing</p>
+        <h1 class="page-title">Amazon India Price<br><span class="gradient-text">Prediction With AI</span></h1>
+        <p class="page-subtitle">Budget to mid-range product pricing, powered by multimodal transformers</p>
     </div>
 </section>
 
@@ -15,23 +15,23 @@
     <div class="section-container-narrow">
         <div class="about-content">
             <h2>Our Mission</h2>
-            <p class="lead-text">PredictCart was built to democratize AI-powered pricing intelligence for e-commerce businesses of all sizes. We believe that advanced machine learning shouldn't be reserved for tech giants — every merchant deserves data-driven pricing insights.</p>
+            <p class="lead-text">PredictCart was built to predict realistic prices for Amazon India products in the budget to mid-range segment (₹200–₹25,000). Using a multimodal transformer architecture, it combines product name understanding, category intelligence, and market signals like ratings and discounts to give you an instant price estimate.</p>
 
             <h2>The Technology</h2>
-            <p>Our multimodal transformer architecture represents the cutting edge of price prediction technology. By combining BERT's natural language understanding with category intelligence and market signals, we achieve industry-leading accuracy of 85%+.</p>
+            <p>Our model combines BERT's natural language understanding with category encoding and numeric features (ratings, reviews, discount ratio) using a compact Transformer (d_model=128, 4 attention heads, 2 layers, ~340K parameters). It was trained on real Amazon India product listings across categories like accessories, camera gear, sports equipment, home &amp; kitchen, baby products, and books.</p>
 
-            <p>The model was trained on over 100,000 real Amazon product listings across 19 categories, learning complex pricing patterns that traditional methods miss. From luxury electronics to everyday essentials, PredictCart understands the nuances that determine market value.</p>
+            <p>The model predicts in log-price space and is most accurate for products priced <strong>₹200–₹25,000</strong>. It is not designed for premium smartphones, high-end laptops, or luxury items. Think of it as a smart pricing assistant for everyday Amazon India product categories.</p>
 
             <h2>Open Source</h2>
             <p>We're committed to transparency and collaboration. PredictCart is fully open source under the MIT License, allowing developers worldwide to inspect, modify, and improve the codebase.</p>
 
             <div class="stats-highlight">
                 <div class="stat-box">
-                    <div class="stat-number">100K+</div>
-                    <div class="stat-text">Training Samples</div>
+                    <div class="stat-number">₹200-25K</div>
+                    <div class="stat-text">Price Range (INR)</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-number">440M</div>
+                    <div class="stat-number">~340K</div>
                     <div class="stat-text">Model Parameters</div>
                 </div>
                 <div class="stat-box">
@@ -39,15 +39,15 @@
                     <div class="stat-text">Accuracy</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-number">19</div>
+                    <div class="stat-number">5</div>
                     <div class="stat-text">Categories</div>
                 </div>
             </div>
 
             <h2>Project Background</h2>
-            <p>Developed as a research project exploring multimodal machine learning applications in e-commerce, PredictCart demonstrates how transformer architectures can be adapted beyond NLP to solve real-world business problems.</p>
+            <p>Developed as a research and learning project exploring multimodal machine learning for Amazon India e-commerce pricing, PredictCart demonstrates how BERT + Transformer architectures can be applied to real-world structured prediction problems.</p>
 
-            <p>The project showcases modern MLOps practices including model versioning, feature engineering pipelines, and production deployment strategies. It's designed to be both a practical tool and a learning resource for developers interested in applied machine learning.</p>
+            <p>The project is intentionally scoped to the budget/mid-range Amazon India product space (₹200–₹25,000) where the training data is most dense. The model has been validated on products like camera accessories, bags &amp; luggage, sports gear, home appliances, and baby products — the kinds of items that dominate Amazon India's catalog volume.</p>
 
             <h2>Get Involved</h2>
             <p>We welcome contributions from the community! Whether you're interested in improving model accuracy, adding new features, or enhancing documentation, there are many ways to contribute.</p>

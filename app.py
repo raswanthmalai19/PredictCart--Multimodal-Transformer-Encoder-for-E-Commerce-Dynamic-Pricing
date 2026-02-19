@@ -5,45 +5,97 @@ Professional frontend for multimodal price prediction model.
 from flask import Flask, render_template, request, jsonify
 import traceback
 import os
-from predict import get_predictor
 
 # Initialize Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ecommerce-price-predictor-2026'
 app.config['JSON_SORT_KEYS'] = False
 
-# Initialize predictor
-print("🚀 Starting Flask Application...")
-predictor = None
+# Global predictor instance (lazy loaded)
+_predictor = None
+_predictor_error = None
 
-def initialize_predictor():
-    """Initialize predictor on first request."""
-    global predictor
-    if predictor is None:
-        try:
-            predictor = get_predictor()
-            print("✅ Predictor initialized successfully")
-        except Exception as e:
-            print(f"❌ Error initializing predictor: {e}")
-            traceback.print_exc()
+def get_predictor_instance():
+    """Get or create predictor instance (singleton pattern)."""
+    global _predictor, _predictor_error
+    
+    if _predictor is not None:
+        return _predictor
+    
+    if _predictor_error is not None:
+        return None
+    
+    try:
+        print("🔧 Loading predictor for the first time...")
+        from predict import get_predictor
+        _predictor = get_predictor()
+        print("✅ Predictor loaded successfully!")
+        return _predictor
+    except Exception as e:
+        _predictor_error = str(e)
+        print(f"❌ Failed to load predictor: {e}")
+        traceback.print_exc()
+        return None
 
 @app.route('/')
 def index():
     """Render main page."""
-    initialize_predictor()
-    categories = predictor.get_available_categories() if predictor else []
-    return render_template('index.html', categories=categories)
+    predictor = get_predictor_instance()
+    
+    # Get categories with fallback
+    if predictor:
+        try:
+            categories = predictor.get_available_categories()
+        except:
+            categories = ['electronics', 'books', 'sports', 'fashion', 'home & kitchen']
+    else:
+        categories = ['electronics', 'books', 'sports', 'fashion', 'home & kitchen']
+    
+    return render_template('home.html', categories=categories)
+
+@app.route('/predict')
+def predict_page():
+    """Prediction tool page."""
+    categories = [
+        'accessories', 'appliances', 'automotive', 'baby',
+        'beauty', 'books', 'car & motorbike', 'computers',
+        'electronics', 'fashion', 'grocery', 'health & personal care',
+        'home & kitchen', 'music', 'pet supplies', 'sports',
+        'toys & games', 'tv, audio & cameras', 'video games'
+    ]
+    return render_template('predict.html', categories=categories)
+
+@app.route('/docs')
+def docs():
+    """Documentation page."""
+    return render_template('docs.html')
+
+@app.route('/about')
+def about():
+    """About page."""
+    return render_template('about.html')
+
+@app.route('/features')
+def features():
+    """Features page."""
+    return render_template('features.html')
+
+@app.route('/api-docs')
+def api_docs():
+    """API Documentation page."""
+    return render_template('api_docs.html')
 
 @app.route('/api/predict', methods=['POST'])
 def predict():
     """API endpoint for price prediction."""
     try:
-        initialize_predictor()
+        predictor = get_predictor_instance()
         
         if predictor is None:
+            error_msg = _predictor_error if _predictor_error else 'Model not loaded. Please wait for initialization.'
             return jsonify({
                 'success': False,
-                'error': 'Model not loaded. Please check server logs.'
+                'error': error_msg
             }), 500
         
         # Get input data
@@ -138,13 +190,15 @@ def predict():
 def get_categories():
     """Get available product categories."""
     try:
-        initialize_predictor()
+        predictor = get_predictor_instance()
         
         if predictor is None:
+            # Return default categories if predictor not loaded
             return jsonify({
-                'success': False,
-                'error': 'Model not loaded'
-            }), 500
+                'success': True,
+                'categories': ['electronics', 'books', 'sports', 'fashion', 'home & kitchen', 
+                              'accessories', 'appliances', 'automotive', 'beauty', 'grocery']
+            })
         
         categories = predictor.get_available_categories()
         
@@ -156,18 +210,19 @@ def get_categories():
     except Exception as e:
         print(f"❌ Error fetching categories: {e}")
         return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+            'success': True,
+            'categories': ['electronics', 'books', 'sports', 'fashion', 'home & kitchen']
+        })
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
     """Health check endpoint."""
-    initialize_predictor()
+    predictor = get_predictor_instance()
     
     return jsonify({
         'status': 'healthy' if predictor else 'initializing',
-        'model_loaded': predictor is not None
+        'model_loaded': predictor is not None,
+        'error': _predictor_error if _predictor_error else None
     })
 
 @app.errorhandler(404)

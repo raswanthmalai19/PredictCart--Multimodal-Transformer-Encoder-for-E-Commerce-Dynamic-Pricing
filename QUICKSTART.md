@@ -27,7 +27,8 @@ Navigate to: **http://localhost:5000**
 ### Input a Product
 
 1. **Product Name**: Enter a detailed product description
-   - Example: "Samsung Galaxy S21 Ultra 5G Smartphone 128GB"
+   - Example: "Wildcraft 45L Rucksack Backpack with Rain Cover Olive Green"
+   - Best for: bags, camera accessories, sports gear, home & kitchen, baby products (₹200–₹25,000)
 
 2. **Category**: Select from dropdown
    - Electronics, Books, Sports, Fashion, etc.
@@ -56,37 +57,52 @@ Click **"Predict Price"** button
 
 ## 🎯 Example Predictions
 
-### Example 1: Electronics
-```
-Product: Samsung Galaxy S21 Ultra 5G
-Category: electronics
-Rating: 4.5 ⭐
-Reviews: 2500
-Discount: 15%
+> ⚠️ The model is trained on Amazon India budget/mid-range products (₹200–₹25,000).
+> Best results with bags, camera accessories, sports gear, home & kitchen, and baby products.
+> **Not suitable for premium smartphones or laptops costing ₹40,000+.**
 
-Result: ₹65,000 - ₹75,000
+### Example 1: Bags & Accessories
 ```
-
-### Example 2: Books
-```
-Product: Harry Potter Complete Collection
-Category: books
-Rating: 4.8 ⭐
-Reviews: 5000
-Discount: 30%
-
-Result: ₹2,500 - ₹3,500
-```
-
-### Example 3: Sports
-```
-Product: Nike Air Zoom Running Shoes
-Category: sports
+Product: Wildcraft 45L Rucksack Backpack with Rain Cover
+Category: fashion
 Rating: 4.3 ⭐
-Reviews: 850
+Reviews: 1800
 Discount: 25%
 
-Result: ₹6,000 - ₹8,000
+Result: ~₹1,900
+```
+
+### Example 2: Camera Accessories
+```
+Product: CP Plus 3MP Full HD Smart Wi-Fi CCTV Camera
+Category: electronics
+Rating: 3.7 ⭐
+Reviews: 95
+Discount: 20%
+
+Result: ~₹2,500
+```
+
+### Example 3: Home & Kitchen
+```
+Product: Pigeon Favourite Electric Pressure Cooker 3 Litre
+Category: home & kitchen
+Rating: 4.1 ⭐
+Reviews: 3200
+Discount: 30%
+
+Result: ~₹1,500
+```
+
+### Example 4: Sports & Fitness
+```
+Product: Boldfit Resistance Band Set with Handles and Carry Bag
+Category: sports
+Rating: 4.2 ⭐
+Reviews: 500
+Discount: 15%
+
+Result: ~₹700
 ```
 
 ---
@@ -108,11 +124,11 @@ Result: ₹6,000 - ₹8,000
 curl -X POST http://localhost:5000/api/predict \
   -H "Content-Type: application/json" \
   -d '{
-    "product_name": "Samsung Galaxy S21",
-    "category": "electronics",
-    "ratings": 4.5,
-    "no_of_ratings": 1500,
-    "discount_ratio": 0.15
+    "product_name": "Wildcraft 45L Rucksack Backpack with Rain Cover",
+    "category": "fashion",
+    "ratings": 4.3,
+    "no_of_ratings": 1800,
+    "discount_ratio": 0.25
   }'
 ```
 

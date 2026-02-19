@@ -9,6 +9,7 @@ import os
 from transformers import AutoTokenizer, AutoModel
 from transformer import MultimodalPriceTransformer
 from config import MODEL_CONFIG, MODEL_SAVE_PATH, DATA_PATH
+from preprocessing_utils import FeaturePreparation
 
 class PricePredictor:
     """Handles all prediction operations for the frontend."""
@@ -29,12 +30,28 @@ class PricePredictor:
         # Load feature preprocessing info
         print("   Loading feature preprocessors...")
         transform_path = os.path.join(DATA_PATH, 'transform_info.pkl')
-        with open(transform_path, 'rb') as f:
-            self.transform_info = pickle.load(f)
+        try:
+            with open(transform_path, 'rb') as f:
+                self.transform_info = pickle.load(f)
+        except Exception as e:
+            print(f"   Warning: Could not load transform_info: {e}")
+            self.transform_info = {}
         
+        # Initialize feature preparation
+        self.feature_prep = FeaturePreparation()
+        
+        # Try to load feature prep if available
         feature_prep_path = os.path.join(DATA_PATH, 'feature_prep.pkl')
-        with open(feature_prep_path, 'rb') as f:
-            self.feature_prep = pickle.load(f)
+        try:
+            with open(feature_prep_path, 'rb') as f:
+                loaded_prep = pickle.load(f)
+                if hasattr(loaded_prep, 'scalers'):
+                    self.feature_prep.scalers = loaded_prep.scalers
+                    self.feature_prep.fitted = loaded_prep.fitted
+                    print("   ✅ Loaded feature preprocessor from pickle")
+        except Exception as e:
+            print(f"   Warning: Could not load feature_prep pickle: {e}")
+            print("   Using empty feature preparation")
         
         # Load price prediction model
         print("   Loading price prediction model...")
@@ -85,22 +102,23 @@ class PricePredictor:
             # Use CLS token embedding
             text_embedding = outputs.last_hidden_state[:, 0, :]  # [1, 768]
         
-        # Project to model dimension
-        d_model = MODEL_CONFIG['d_model']
-        if text_embedding.shape[-1] != d_model:
-            # Simple linear projection
-            projection = torch.nn.Linear(text_embedding.shape[-1], d_model).to(self.device)
-            text_embedding = projection(text_embedding)
+            # Project to model dimension
+            d_model = MODEL_CONFIG['d_model']
+            if text_embedding.shape[-1] != d_model:
+                # Simple linear projection
+                projection = torch.nn.Linear(text_embedding.shape[-1], d_model).to(self.device)
+                projection.eval()
+                text_embedding = projection(text_embedding)
         
-        return text_embedding.squeeze(0).cpu().numpy()  # [d_model]
+        return text_embedding.squeeze(0).detach().cpu().numpy()  # [d_model]
     
     def encode_category(self, category):
         """Encode product category."""
         d_model = MODEL_CONFIG['d_model']
         
         # Use encoder if available
-        if 'category_encoder' in self.feature_prep:
-            encoder = self.feature_prep['category_encoder']
+        if hasattr(self.feature_prep, 'encoders') and 'category_encoder' in self.feature_prep.encoders:
+            encoder = self.feature_prep.encoders['category_encoder']
             try:
                 category_idx = encoder.transform([category])[0]
             except:

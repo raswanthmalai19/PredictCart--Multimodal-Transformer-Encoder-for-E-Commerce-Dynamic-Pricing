@@ -32,7 +32,7 @@
                     <span class="http-method post">POST</span>
                     <code class="endpoint-path">/api/predict</code>
                 </div>
-                <p class="endpoint-desc">Predict product price based on name, category, and market signals.</p>
+                <p class="endpoint-desc">Predict price for an Amazon India product. Works best for products in the ₹200–₹25,000 range — bags, camera accessories, sports gear, home &amp; kitchen, books, and baby products.</p>
 
                 <h3>Request Body</h3>
                 <div class="code-block">
@@ -58,11 +58,11 @@
                     <pre><code>curl -X POST http://localhost:5000/api/predict \
   -H "Content-Type: application/json" \
   -d '{
-    "product_name": "Samsung Galaxy S21 Ultra 5G 128GB Smartphone",
-    "category": "electronics",
-    "ratings": 4.5,
-    "no_of_ratings": 2500,
-    "discount_ratio": 0.15
+    "product_name": "Wildcraft 45L Rucksack Backpack with Rain Cover",
+    "category": "fashion",
+    "ratings": 4.3,
+    "no_of_ratings": 1800,
+    "discount_ratio": 0.25
   }'</code></pre>
                 </div>
 
@@ -75,22 +75,22 @@
                     <pre><code>{
   "success": true,
   "prediction": {
-    "price": 89999.00,
-    "price_formatted": "₹89,999.00",
-    "confidence": 92.3,
+    "price": 1899.00,
+    "price_formatted": "₹1,899.00",
+    "confidence": 90.0,
     "price_range": {
-      "lower": 76499.15,
-      "upper": 103498.85,
-      "lower_formatted": "₹76,499.15",
-      "upper_formatted": "₹1,03,498.85"
+      "lower": 1614.15,
+      "upper": 2183.85,
+      "lower_formatted": "₹1,614.15",
+      "upper_formatted": "₹2,183.85"
     }
   },
   "input": {
-    "product_name": "Samsung Galaxy S21 Ultra 5G 128GB Smartphone",
-    "category": "electronics",
-    "ratings": 4.5,
-    "no_of_ratings": 2500,
-    "discount_ratio": 0.15
+    "product_name": "Wildcraft 45L Rucksack Backpack with Rain Cover",
+    "category": "fashion",
+    "ratings": 4.3,
+    "no_of_ratings": 1800,
+    "discount_ratio": 0.25
   }
 }</code></pre>
                 </div>

@@ -171,7 +171,7 @@ function initSlider() {
         const val = parseFloat(slider.value);
         const pct = (val / parseFloat(slider.max)) * 100;
         if (fill) fill.style.width = pct + '%';
-        if (badge) badge.textContent = Math.round(val * 100) + '%';
+        if (badge) badge.textContent = Math.round(val) + '% OFF';
     }
     slider.addEventListener('input', update);
     update();
@@ -272,7 +272,7 @@ function initForm() {
         const category = document.getElementById('category').value;
         const ratings = parseFloat(document.getElementById('ratings').value) || 0;
         const noOfRatings = parseInt(document.getElementById('noOfRatings').value) || 0;
-        const discountRatio = parseFloat(document.getElementById('discountRatio').value) || 0;
+        const discountRatio = (parseFloat(document.getElementById('discountRatio').value) || 0) / 100;
 
         if (!productName) {
             showToast('Please enter a product name.', 'error');
@@ -296,6 +296,14 @@ function initForm() {
         if (origText) origText.textContent = 'Analyzing...';
 
         try {
+            console.log('📤 Sending prediction request:', {
+                product_name: productName,
+                category: category,
+                ratings: ratings,
+                no_of_ratings: noOfRatings,
+                discount_ratio: discountRatio
+            });
+            
             const res = await fetch('/api/predict', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -308,12 +316,26 @@ function initForm() {
                 })
             });
 
+            console.log('📥 Response status:', res.status);
+
             if (!res.ok) {
                 const err = await res.json();
+                console.error('❌ API Error:', err);
                 throw new Error(err.error || 'Prediction failed');
             }
 
             const data = await res.json();
+            console.log('✅ Prediction received:', data);
+            
+            // Validate data
+            if (!data.success) {
+                throw new Error(data.error || 'Prediction failed');
+            }
+            
+            if (!data.prediction || !data.prediction.price) {
+                console.error('❌ Invalid response structure:', data);
+                throw new Error('Invalid prediction data received');
+            }
 
             // Brief pause for step animation feel
             setTimeout(() => {
@@ -324,9 +346,11 @@ function initForm() {
             }, 1200);
 
         } catch (err) {
+            console.error('❌ Prediction error:', err);
             showState('error');
             const errText = document.querySelector('#errorState .error-text');
-            if (errText) errText.textContent = err.message || 'Something went wrong.';
+            if (errText) errText.textContent = err.message || 'Something went wrong. Please try again.';
+            showToast('Prediction failed: ' + (err.message || 'Unknown error'), 'error');
         } finally {
             submitBtn.disabled = false;
             if (origText) origText.textContent = 'Predict Price';
@@ -385,66 +409,97 @@ function animateSteps(steps) {
    DISPLAY RESULTS
    ============================================ */
 function displayResults(data, inputs) {
+    // Log received data for debugging
+    console.log('📊 Display Results - Received data:', data);
+    console.log('📊 Display Results - Inputs:', inputs);
+    
+    // Extract prediction data (API returns data.prediction)
+    const prediction = data.prediction || data;
+    const predictedPrice = Number(prediction.price || 0);
+    const confidence = Number(prediction.confidence || 0);
+    const priceRange = prediction.price_range || {};
+    
+    console.log('💰 Predicted Price:', predictedPrice);
+    console.log('📈 Confidence:', confidence);
+    console.log('📉 Price Range:', priceRange);
+    
+    // Validate data
+    if (isNaN(predictedPrice) || predictedPrice <= 0) {
+        console.error('❌ Invalid predicted price:', predictedPrice);
+        showToast('Invalid prediction received. Please try again.', 'error');
+        return;
+    }
+    
     // Price
     const priceEl = document.getElementById('predictedPrice');
-    if (priceEl) animateNumber(priceEl, data.predicted_price, '₹');
+    if (priceEl) {
+        console.log('Setting price element');
+        animateNumber(priceEl, predictedPrice, '₹');
+    }
 
     // Confidence
     const confValue = document.getElementById('confidenceValue');
     const confFill = document.getElementById('confidenceFill');
     const confHint = document.getElementById('confidenceHint');
-    const conf = data.confidence || 0;
-    if (confValue) confValue.textContent = conf + '%';
+    if (confValue) confValue.textContent = confidence + '%';
     if (confFill) {
         confFill.style.width = '0%';
         requestAnimationFrame(() => {
-            setTimeout(() => { confFill.style.width = conf + '%'; }, 100);
+            setTimeout(() => { confFill.style.width = confidence + '%'; }, 100);
         });
     }
     if (confHint) {
-        if (conf >= 80) confHint.textContent = 'High confidence — prediction is reliable.';
-        else if (conf >= 50) confHint.textContent = 'Moderate confidence — consider as estimate.';
+        if (confidence >= 80) confHint.textContent = 'High confidence — prediction is reliable.';
+        else if (confidence >= 50) confHint.textContent = 'Moderate confidence — consider as estimate.';
         else confHint.textContent = 'Low confidence — use as rough guideline.';
     }
 
-    // Range
+    // Range (API uses 'lower' and 'upper', not 'low' and 'high')
     const priceLow = document.getElementById('priceLow');
     const priceHigh = document.getElementById('priceHigh');
     const priceMid = document.getElementById('priceMid');
-    const low = data.price_range?.low || data.predicted_price * 0.85;
-    const high = data.price_range?.high || data.predicted_price * 1.15;
+    const low = Number(priceRange.lower || predictedPrice * 0.85);
+    const high = Number(priceRange.upper || predictedPrice * 1.15);
 
-    if (priceLow) priceLow.textContent = formatCurrency(low);
-    if (priceHigh) priceHigh.textContent = formatCurrency(high);
-    if (priceMid) priceMid.textContent = formatCurrency(data.predicted_price);
+    console.log('📊 Price Range - Low:', low, 'High:', high);
+
+    if (priceLow) priceLow.textContent = '₹' + formatCurrency(low);
+    if (priceHigh) priceHigh.textContent = '₹' + formatCurrency(high);
+    if (priceMid) priceMid.textContent = '₹' + formatCurrency(predictedPrice);
 
     // Summary
     const sumProduct = document.getElementById('sumProduct');
     const sumCategory = document.getElementById('sumCategory');
-    const sumRating = document.getElementById('sumReviews');
+    const sumRating = document.getElementById('sumRating');
     const sumReviews = document.getElementById('sumReviews');
 
     if (sumProduct) sumProduct.textContent = truncate(inputs.productName, 28);
     if (sumCategory) sumCategory.textContent = inputs.category;
-    if (document.getElementById('sumRating'))
-        document.getElementById('sumRating').textContent = inputs.ratings.toFixed(1) + ' / 5';
-    if (sumReviews)
-        sumReviews.textContent = inputs.noOfRatings.toLocaleString();
+    if (sumRating) sumRating.textContent = inputs.ratings.toFixed(1) + ' / 5';
+    if (sumReviews) sumReviews.textContent = inputs.noOfRatings.toLocaleString();
 }
 
 /* ============================================
    HELPERS
    ============================================ */
 function animateNumber(el, target, prefix = '') {
+    // Validate target is a number
+    if (target == null || isNaN(target) || !isFinite(target)) {
+        console.error('Invalid animation target:', target);
+        el.textContent = prefix + '0';
+        return;
+    }
+    
     const duration = 1200;
     const start = performance.now();
     const from = 0;
+    const targetNum = Number(target);
 
     function tick(now) {
         const elapsed = now - start;
         const progress = Math.min(elapsed / duration, 1);
         const eased = 1 - Math.pow(1 - progress, 3);
-        const current = from + (target - from) * eased;
+        const current = from + (targetNum - from) * eased;
         el.textContent = prefix + formatCurrency(current);
         if (progress < 1) requestAnimationFrame(tick);
     }
@@ -452,9 +507,16 @@ function animateNumber(el, target, prefix = '') {
 }
 
 function formatCurrency(value) {
-    if (value >= 100000) return (value / 100000).toFixed(2) + 'L';
-    if (value >= 1000) return (value / 1000).toFixed(1) + 'K';
-    return Math.round(value).toLocaleString('en-IN');
+    // Handle invalid values
+    if (value == null || isNaN(value) || !isFinite(value)) {
+        console.error('Invalid currency value:', value);
+        return '0';
+    }
+    
+    const numValue = Number(value);
+    if (numValue >= 100000) return (numValue / 100000).toFixed(2) + 'L';
+    if (numValue >= 1000) return (numValue / 1000).toFixed(1) + 'K';
+    return Math.round(numValue).toLocaleString('en-IN');
 }
 
 function truncate(str, max) {

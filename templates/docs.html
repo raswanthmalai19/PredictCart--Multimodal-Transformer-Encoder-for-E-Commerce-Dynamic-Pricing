@@ -8,7 +8,7 @@
         <div class="docs-header">
             <span class="section-badge">Documentation</span>
             <h1 class="docs-title">Get Started with <span class="gradient-text">PredictCart</span></h1>
-            <p class="docs-subtitle">Everything you need to integrate AI-powered price prediction into your application</p>
+            <p class="docs-subtitle">Everything you need to use PredictCart for Amazon India product price prediction (₹200–₹25,000)</p>
         </div>
     </div>
 </section>
@@ -85,7 +85,7 @@ python app_quick.py
                     </svg>
                     <div>
                         <strong>First Run</strong>
-                        <p>The BERT model (440MB) will be downloaded automatically on first prediction. This may take 2-3 minutes.</p>
+                        <p>The BERT model (~440MB) will be downloaded automatically on first prediction. This may take 2–3 minutes.</p>
                     </div>
                 </div>
             </article>
@@ -98,11 +98,11 @@ python app_quick.py
                 <div class="architecture-grid">
                     <div class="arch-card">
                         <h4>Text Encoder</h4>
-                        <p>BERT-base-uncased (440M parameters) encodes product names into 768-dimensional semantic vectors.</p>
+                        <p>BERT-base-uncased encodes product names into 768-dimensional semantic vectors, then projected to 128-dim.</p>
                     </div>
                     <div class="arch-card">
                         <h4>Category Encoder</h4>
-                        <p>One-hot encoding for 19 product categories with learnable category embeddings.</p>
+                        <p>Hash-based encoding for 5 supported categories (electronics, books, sports, fashion, home &amp; kitchen).</p>
                     </div>
                     <div class="arch-card">
                         <h4>Transformer Layers</h4>
@@ -118,11 +118,11 @@ python app_quick.py
                 <div class="specs-table">
                     <div class="spec-row">
                         <div class="spec-label">Dataset</div>
-                        <div class="spec-value">100K+ Amazon products across 19 categories</div>
+                        <div class="spec-value">Amazon India budget/mid-range listings across bags, camera accessories, sports, home & kitchen, baby products, books</div>
                     </div>
                     <div class="spec-row">
-                        <div class="spec-label">Training Time</div>
-                        <div class="spec-value">~8 hours on NVIDIA RTX 3090</div>
+                        <div class="spec-label">Price Range</div>
+                        <div class="spec-value">₹200 – ₹25,000 (budget to mid-range)</div>
                     </div>
                     <div class="spec-row">
                         <div class="spec-label">Accuracy</div>
@@ -147,11 +147,11 @@ python app_quick.py
                         <button class="code-copy">Copy</button>
                     </div>
                     <pre><code>{
-  "product_name": "Samsung Galaxy S21 Ultra 5G 128GB Smartphone",
-  "category": "electronics",
-  "ratings": 4.5,
-  "no_of_ratings": 2500,
-  "discount_ratio": 0.15
+  "product_name": "Wildcraft 45L Rucksack Backpack with Rain Cover",
+  "category": "fashion",
+  "ratings": 4.3,
+  "no_of_ratings": 1800,
+  "discount_ratio": 0.25
 }</code></pre>
                 </div>
 
@@ -163,11 +163,23 @@ python app_quick.py
                     </div>
                     <pre><code>{
   "success": true,
-  "predicted_price": 89999.00,
-  "confidence": 0.92,
-  "price_range": {
-    "low": 73999.15,
-    "high": 105998.85
+  "prediction": {
+    "price": 1899.00,
+    "price_formatted": "₹1,899.00",
+    "confidence": 90.0,
+    "price_range": {
+      "lower": 1614.15,
+      "upper": 2183.85,
+      "lower_formatted": "₹1,614.15",
+      "upper_formatted": "₹2,183.85"
+    }
+  },
+  "input": {
+    "product_name": "Wildcraft 45L Rucksack Backpack with Rain Cover",
+    "category": "fashion",
+    "ratings": 4.3,
+    "no_of_ratings": 1800,
+    "discount_ratio": 0.25
   }
 }</code></pre>
                 </div>

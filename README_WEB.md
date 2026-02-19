@@ -118,11 +118,11 @@ POST /api/predict
 Content-Type: application/json
 
 {
-    "product_name": "Samsung Galaxy S21 5G",
-    "category": "electronics",
-    "ratings": 4.5,
-    "no_of_ratings": 1500,
-    "discount_ratio": 0.15
+    "product_name": "Wildcraft 45L Rucksack Backpack with Rain Cover",
+    "category": "fashion",
+    "ratings": 4.3,
+    "no_of_ratings": 1800,
+    "discount_ratio": 0.25
 }
 ```
 
@@ -131,22 +131,22 @@ Response:
 {
     "success": true,
     "prediction": {
-        "price": 45999.50,
-        "price_formatted": "₹45,999.50",
+        "price": 1899.00,
+        "price_formatted": "₹1,899.00",
         "confidence": 90.0,
         "price_range": {
-            "lower": 39099.58,
-            "upper": 52899.43,
-            "lower_formatted": "₹39,099.58",
-            "upper_formatted": "₹52,899.43"
+            "lower": 1614.15,
+            "upper": 2183.85,
+            "lower_formatted": "₹1,614.15",
+            "upper_formatted": "₹2,183.85"
         }
     },
     "input": {
-        "product_name": "Samsung Galaxy S21 5G",
-        "category": "electronics",
-        "ratings": 4.5,
-        "no_of_ratings": 1500,
-        "discount_ratio": 0.15
+        "product_name": "Wildcraft 45L Rucksack Backpack with Rain Cover",
+        "category": "fashion",
+        "ratings": 4.3,
+        "no_of_ratings": 1800,
+        "discount_ratio": 0.25
     }
 }
 ```

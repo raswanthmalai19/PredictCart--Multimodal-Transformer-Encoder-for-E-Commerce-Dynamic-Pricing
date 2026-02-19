@@ -6,20 +6,22 @@
 [![Transformers](https://img.shields.io/badge/🤗_Transformers-4.35+-yellow.svg)](https://huggingface.co/transformers/)
 [![License](https://img.shields.io/badge/License-MIT-orange.svg)](LICENSE)
 
-> **AI-Powered E-Commerce Price Prediction System** combining BERT embeddings, category encodings, and numeric features through a multimodal transformer architecture.
+> **AI-Powered Amazon India Price Prediction** combining BERT embeddings, category encodings, and numeric features through a compact multimodal transformer. Trained on real Amazon India listings, best for products in the ₹200–₹25,000 range.
 
 ![PredictCart Demo](https://img.shields.io/badge/Status-Production_Ready-success)
 
 ## 🌟 Features
 
-- **🤖 Advanced AI Model**: Multimodal transformer combining text (BERT), category, and numeric features
+- **🤖 Advanced AI Model**: Multimodal transformer (~340K params) combining text (BERT), category, and numeric features
 - **🌐 Beautiful Web Interface**: Modern, responsive UI with real-time predictions
-- **⚡ Fast Predictions**: Get price estimates in < 2 seconds
-- **📊 High Accuracy**: 85%+ R² score, ±₹2,500 average error
+- **⚡ Fast Predictions**: Get price estimates in under 3 seconds
+- **📊 High Accuracy**: 85%+ accuracy for products in the ₹200–₹25,000 range
+- **🎯 Target Products**: Bags & accessories, camera gear, sports equipment, home & kitchen, baby products, books
 - **🔌 RESTful API**: Easy integration with existing systems
 - **📱 Mobile Responsive**: Works seamlessly on all devices
 - **🎯 Confidence Scoring**: Know how reliable each prediction is
 - **📈 Price Ranges**: Get upper and lower bounds for predictions
+- **⚠️ Scope**: Trained on Amazon India budget/mid-range products — not for premium smartphones or luxury goods
 
 ## 🎬 Demo
 
@@ -159,29 +161,55 @@ bash start_web.sh
 
 ### Example Predictions
 
-#### Electronics
+#### Bags & Accessories
 ```
-Product: Samsung Galaxy S21 Ultra 5G
-Category: electronics
-Rating: 4.5 ⭐
-Reviews: 2500
-Discount: 15%
+Product: Wildcraft 45L Rucksack Backpack with Rain Cover
+Category: fashion
+Rating: 4.3 ⭐
+Reviews: 1800
+Discount: 25%
 
-→ Predicted Price: ₹65,000 - ₹75,000
+→ Predicted Price: ₹1,500 – ₹2,200
 → Confidence: 90%
 ```
 
-#### Books
+#### Camera Accessories
 ```
-Product: Harry Potter Complete Collection
-Category: books
-Rating: 4.8 ⭐
-Reviews: 5000
+Product: CP Plus 3MP Full HD Smart Wi-Fi CCTV Camera
+Category: electronics
+Rating: 3.7 ⭐
+Reviews: 95
+Discount: 20%
+
+→ Predicted Price: ₹1,800 – ₹3,500
+→ Confidence: 90%
+```
+
+#### Home & Kitchen
+```
+Product: Pigeon Favourite Electric Pressure Cooker 3L
+Category: home & kitchen
+Rating: 4.1 ⭐
+Reviews: 3200
 Discount: 30%
 
-→ Predicted Price: ₹2,500 - ₹3,500
-→ Confidence: 92%
+→ Predicted Price: ₹1,200 – ₹3,000
+→ Confidence: 90%
 ```
+
+#### Sports & Fitness
+```
+Product: Boldfit Resistance Band Set with Carry Bag
+Category: sports
+Rating: 4.2 ⭐
+Reviews: 500
+Discount: 15%
+
+→ Predicted Price: ₹400 – ₹1,100
+→ Confidence: 90%
+```
+
+> ⚠️ **Note:** The model is trained on budget/mid-range Amazon India products (₹200–₹25,000). It is **not suitable** for premium smartphones, high-end laptops, or luxury items that cost ₹40,000+.
 
 ## 🔌 API Documentation
 
@@ -192,11 +220,11 @@ Discount: 30%
 **Request**:
 ```json
 {
-  "product_name": "Samsung Galaxy S21 5G",
-  "category": "electronics",
-  "ratings": 4.5,
-  "no_of_ratings": 1500,
-  "discount_ratio": 0.15
+  "product_name": "Wildcraft 45L Rucksack Backpack with Rain Cover",
+  "category": "fashion",
+  "ratings": 4.3,
+  "no_of_ratings": 1800,
+  "discount_ratio": 0.25
 }
 ```
 
@@ -205,14 +233,14 @@ Discount: 30%
 {
   "success": true,
   "prediction": {
-    "price": 45999.50,
-    "price_formatted": "₹45,999.50",
+    "price": 1899.00,
+    "price_formatted": "₹1,899.00",
     "confidence": 90.0,
     "price_range": {
-      "lower": 39099.58,
-      "upper": 52899.43,
-      "lower_formatted": "₹39,099.58",
-      "upper_formatted": "₹52,899.43"
+      "lower": 1614.15,
+      "upper": 2183.85,
+      "lower_formatted": "₹1,614.15",
+      "upper_formatted": "₹2,183.85"
     }
   }
 }
@@ -251,7 +279,7 @@ Discount: 30%
 - **Attention Heads**: 4
 - **Encoder Layers**: 2
 - **Dropout**: 0.2
-- **Total Parameters**: ~250K
+- **Total Parameters**: ~340K
 
 ### Input Features
 
@@ -261,8 +289,8 @@ Discount: 30%
    - Linear projection to model dimension
 
 2. **Category Encoding** (128 dim):
-   - One-hot style encoding
-   - 19 main categories
+   - Hash-based encoding
+   - 5 supported categories: electronics, books, sports, fashion, home & kitchen
 
 3. **Numeric Features** (128 dim):
    - Product rating (0-5)
@@ -282,47 +310,48 @@ Discount: 30%
 
 ### Source Data
 
-- **Total Products**: 70,000+
-- **Categories**: 35+
-- **Price Range**: ₹100 - ₹400,000
-- **Features**: Name, category, ratings, reviews, discounts
+- **Source**: Real Amazon India product listings (scraped dataset)
+- **Categories**: Bags & luggage, camera accessories, sports & fitness, home & kitchen, baby products, books, and more
+- **Price Range**: ₹200 – ₹25,000 (budget to mid-range)
+- **Features per product**: Name, category, ratings, number of ratings, discount ratio, actual price
 
-### Data Distribution
+### What the Model Knows
 
-| Category | Products | Avg Price |
-|----------|----------|-----------|
-| Electronics | 15,000 | ₹25,000 |
-| Books | 8,000 | ₹500 |
-| Fashion | 12,000 | ₹1,200 |
-| Sports | 7,000 | ₹3,500 |
-| Home & Kitchen | 10,000 | ₹2,800 |
-| Others | 18,000 | Varies |
+| Category | Typical Price Range | Examples |
+|----------|--------------------|---------|
+| Bags & Luggage | ₹300 – ₹3,000 | Wildcraft backpacks, travel bags |
+| Camera Accessories | ₹200 – ₹5,000 | Ring lights, CCTV cameras, lens hoods |
+| Sports & Fitness | ₹300 – ₹3,000 | Resistance bands, yoga mats |
+| Home & Kitchen | ₹400 – ₹12,000 | Pressure cookers, appliances |
+| Baby Products | ₹400 – ₹3,000 | Grooming kits, bath products |
+| Books | ₹100 – ₹1,500 | Novels, textbooks |
+
+> ⚠️ The model has **not** been trained on premium smartphones, high-end laptops, luxury fashion, or any product regularly priced above ₹25,000. Predictions for such products will be unreliable.
 
 ### Preprocessing
 
-1. Log transformation of prices
+1. Log transformation of prices (log-price regression)
 2. Text cleaning and normalization
-3. BERT embedding generation
-4. Feature scaling and encoding
-5. Train/Val/Test split (70/15/15)
+3. BERT embedding generation (CLS token)
+4. Feature normalization
+5. Train/Val/Test split
 
 ## 📈 Performance
 
 ### Metrics
 
 | Metric | Value |
-|--------|-------|
+|--------|---------|
 | **R² Score** | 0.85+ |
-| **RMSE** (log scale) | 0.25 |
-| **MAE** (actual prices) | ₹2,500 - ₹3,000 |
-| **MAPE** | 15-20% |
+| **Target Price Range** | ₹200 – ₹25,000 |
+| **Best Categories** | Bags, camera accessories, sports, home & kitchen |
+| **Confidence (typical products)** | 90% |
 
 ### Confidence Levels
 
-- **90-100%**: High confidence - typical products
-- **75-89%**: Good confidence - some variation
-- **60-74%**: Moderate confidence - unusual specs
-- **<60%**: Low confidence - outliers
+- **90%**: Products in the ₹500–₹50,000 range
+- **75%**: Products in the ₹100–₹500 or ₹50,000–₹1,00,000 range
+- **60%**: Extreme values or out-of-distribution products
 
 ## 📁 Project Structure
 
@@ -330,7 +359,13 @@ Discount: 30%
 PredictCart/
 ├── 🌐 Frontend
 │   ├── templates/
-│   │   └── index.html              # Web interface
+│   │   ├── base.html               # Base layout
+│   │   ├── home.html               # Landing page
+│   │   ├── predict.html            # Prediction page
+│   │   ├── about.html              # About page
+│   │   ├── features.html           # Features page
+│   │   ├── docs.html               # Documentation
+│   │   └── api_docs.html           # API reference
 │   └── static/
 │       ├── css/style.css           # Styling
 │       └── js/app.js               # Client-side logic
