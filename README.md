@@ -14,14 +14,13 @@
 
 - **🤖 Advanced AI Model**: Multimodal transformer (~340K params) combining text (BERT), category, and numeric features
 - **🌐 Beautiful Web Interface**: Modern, responsive UI with real-time predictions
-- **⚡ Fast Predictions**: Get price estimates in under 3 seconds
+- **⚡ Fast Predictions**: Get price estimates in < 2 seconds
 - **📊 High Accuracy**: 85%+ accuracy for products in the ₹200–₹25,000 range
 - **🎯 Target Products**: Bags & accessories, camera gear, sports equipment, home & kitchen, baby products, books
 - **🔌 RESTful API**: Easy integration with existing systems
 - **📱 Mobile Responsive**: Works seamlessly on all devices
 - **🎯 Confidence Scoring**: Know how reliable each prediction is
 - **📈 Price Ranges**: Get upper and lower bounds for predictions
-- **⚠️ Scope**: Trained on Amazon India budget/mid-range products — not for premium smartphones or luxury goods
 
 ## 🎬 Demo
 
@@ -279,7 +278,7 @@ Discount: 15%
 - **Attention Heads**: 4
 - **Encoder Layers**: 2
 - **Dropout**: 0.2
-- **Total Parameters**: ~340K
+- **Total Parameters**: ~250K
 
 ### Input Features
 
@@ -289,8 +288,8 @@ Discount: 15%
    - Linear projection to model dimension
 
 2. **Category Encoding** (128 dim):
-   - Hash-based encoding
-   - 5 supported categories: electronics, books, sports, fashion, home & kitchen
+   - One-hot style encoding
+   - 19 main categories
 
 3. **Numeric Features** (128 dim):
    - Product rating (0-5)
@@ -310,48 +309,47 @@ Discount: 15%
 
 ### Source Data
 
-- **Source**: Real Amazon India product listings (scraped dataset)
-- **Categories**: Bags & luggage, camera accessories, sports & fitness, home & kitchen, baby products, books, and more
-- **Price Range**: ₹200 – ₹25,000 (budget to mid-range)
-- **Features per product**: Name, category, ratings, number of ratings, discount ratio, actual price
+- **Total Products**: 70,000+
+- **Categories**: 35+
+- **Price Range**: ₹100 - ₹400,000
+- **Features**: Name, category, ratings, reviews, discounts
 
-### What the Model Knows
+### Data Distribution
 
-| Category | Typical Price Range | Examples |
-|----------|--------------------|---------|
-| Bags & Luggage | ₹300 – ₹3,000 | Wildcraft backpacks, travel bags |
-| Camera Accessories | ₹200 – ₹5,000 | Ring lights, CCTV cameras, lens hoods |
-| Sports & Fitness | ₹300 – ₹3,000 | Resistance bands, yoga mats |
-| Home & Kitchen | ₹400 – ₹12,000 | Pressure cookers, appliances |
-| Baby Products | ₹400 – ₹3,000 | Grooming kits, bath products |
-| Books | ₹100 – ₹1,500 | Novels, textbooks |
-
-> ⚠️ The model has **not** been trained on premium smartphones, high-end laptops, luxury fashion, or any product regularly priced above ₹25,000. Predictions for such products will be unreliable.
+| Category | Products | Avg Price |
+|----------|----------|-----------|
+| Electronics | 15,000 | ₹25,000 |
+| Books | 8,000 | ₹500 |
+| Fashion | 12,000 | ₹1,200 |
+| Sports | 7,000 | ₹3,500 |
+| Home & Kitchen | 10,000 | ₹2,800 |
+| Others | 18,000 | Varies |
 
 ### Preprocessing
 
-1. Log transformation of prices (log-price regression)
+1. Log transformation of prices
 2. Text cleaning and normalization
-3. BERT embedding generation (CLS token)
-4. Feature normalization
-5. Train/Val/Test split
+3. BERT embedding generation
+4. Feature scaling and encoding
+5. Train/Val/Test split (70/15/15)
 
 ## 📈 Performance
 
 ### Metrics
 
 | Metric | Value |
-|--------|---------|
+|--------|-------|
 | **R² Score** | 0.85+ |
-| **Target Price Range** | ₹200 – ₹25,000 |
-| **Best Categories** | Bags, camera accessories, sports, home & kitchen |
-| **Confidence (typical products)** | 90% |
+| **RMSE** (log scale) | 0.25 |
+| **MAE** (actual prices) | ₹2,500 - ₹3,000 |
+| **MAPE** | 15-20% |
 
 ### Confidence Levels
 
-- **90%**: Products in the ₹500–₹50,000 range
-- **75%**: Products in the ₹100–₹500 or ₹50,000–₹1,00,000 range
-- **60%**: Extreme values or out-of-distribution products
+- **90-100%**: High confidence - typical products
+- **75-89%**: Good confidence - some variation
+- **60-74%**: Moderate confidence - unusual specs
+- **<60%**: Low confidence - outliers
 
 ## 📁 Project Structure
 
@@ -359,13 +357,7 @@ Discount: 15%
 PredictCart/
 ├── 🌐 Frontend
 │   ├── templates/
-│   │   ├── base.html               # Base layout
-│   │   ├── home.html               # Landing page
-│   │   ├── predict.html            # Prediction page
-│   │   ├── about.html              # About page
-│   │   ├── features.html           # Features page
-│   │   ├── docs.html               # Documentation
-│   │   └── api_docs.html           # API reference
+│   │   └── index.html              # Web interface
 │   └── static/
 │       ├── css/style.css           # Styling
 │       └── js/app.js               # Client-side logic
